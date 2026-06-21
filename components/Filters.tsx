@@ -42,6 +42,21 @@ export default function Filters({
     }
   }, [yearRange]);
 
+  const [massRange, setMassRange] = useState<{ min: number; max: number } | null>(null);
+
+  useEffect(() => {
+    fetch("/api/mass-range")
+      .then((r) => r.json())
+      .then(setMassRange)
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (massRange && value.massMin == null && value.massMax == null) {
+      set({ massMin: massRange.min, massMax: massRange.max });
+    }
+  }, [massRange]);
+
 
   const set = (patch: Partial<FilterState>) => onChange({ ...value, ...patch });
 
@@ -107,19 +122,31 @@ export default function Filters({
       </div>
 
       <div>
-        <label style={{ fontSize: 12, color: "#8b9bb0" }}>Mass range (g)</label>
+        <label style={{ fontSize: 12, color: "#8b9bb0" }}>Mass range (g) {massRange && `(${massRange.min}–${massRange.max})`}</label>
         <div style={{ display: "flex", gap: 8 }}>
           <input
             type="number"
-            placeholder="Min g"
+            min={massRange?.min}
+            max={massRange?.max}
             value={value.massMin ?? ""}
             onChange={(e) => set({ massMin: e.target.value ? Number(e.target.value) : undefined })}
+            onBlur={(e) => {
+              if (!massRange || !e.target.value) return;
+              const clamped = Math.min(Math.max(Number(e.target.value), massRange.min), massRange.max);
+              set({ massMin: clamped });
+            }}
           />
           <input
             type="number"
-            placeholder="Max g"
+            min={massRange?.min}
+            max={massRange?.max}
             value={value.massMax ?? ""}
             onChange={(e) => set({ massMax: e.target.value ? Number(e.target.value) : undefined })}
+            onBlur={(e) => {
+              if (!massRange || !e.target.value) return;
+              const clamped = Math.min(Math.max(Number(e.target.value), massRange.min), massRange.max);
+              set({ massMax: clamped });
+            }}
           />
         </div>
       </div>

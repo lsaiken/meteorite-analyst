@@ -141,3 +141,11 @@ export async function getYearRange(): Promise<{ min: number; max: number }> {
   );
   return rows[0];
 }
+
+/* Min and max values for year */
+export async function getMassRange(): Promise<{ min: number; max: number }> {
+  const rows = await query<{ min: number; max: number }>(
+    `select min(mass_g) as min, max(mass_g) as max from meteorites where mass_g is not null`
+  );
+  return rows[0];
+}
