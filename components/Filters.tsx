@@ -39,7 +39,7 @@ export default function Filters({
       </div>
 
       <div>
-        <label style={{ fontSize: 12, color: "#8b9bb0" }}>Fall vs Found</label>
+        <label style={{ fontSize: 12, color: "#8b9bb0" }}>Discovery Method</label>
         <select
           value={value.discoveryMethod ?? ""}
           onChange={(e) => set({ discoveryMethod: (e.target.value || undefined) as "Fell" | "Found" | undefined })}
