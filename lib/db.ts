@@ -23,7 +23,21 @@ function resolveConnectionString(): string {
         "via the Vercel integration so POSTGRES_URL is auto-populated."
     );
   }
-  return connectionString;
+
+  // Strip any sslmode param from the URL itself. We configure SSL explicitly
+  // below via the `ssl` option instead, so a leftover `sslmode=require` (common
+  // in Supabase/Vercel-integration connection strings) is redundant and is what
+  // triggers pg-connection-string's "SECURITY WARNING" about sslmode aliasing -
+  // removing it avoids relying on a mode whose semantics change in pg v9.
+  try {
+    const url = new URL(connectionString);
+    url.searchParams.delete("sslmode");
+    return url.toString();
+  } catch {
+    // Not a valid URL (e.g. odd characters) - fall back to a regex strip
+    // rather than failing outright.
+    return connectionString.replace(/([?&])sslmode=[^&]*&?/, "$1").replace(/[?&]$/, "");
+  }
 }
 
 export function getPool(): Pool {
