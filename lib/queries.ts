@@ -135,10 +135,9 @@ export async function getDistinctRecclassValues(): Promise<string[]> {
 }
 
 /* Min and max values for year */
-export async function getMinMaxYearValues() {
-  const sql = `
-  select min(year), max(year)
-  from meteorites
-  `;
-  return query(sql);
+export async function getYearRange(): Promise<{ min: number; max: number }> {
+  const rows = await query<{ min: number; max: number }>(
+    `select min(year) as min, max(year) as max from meteorites where year is not null`
+  );
+  return rows[0];
 }

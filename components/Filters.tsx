@@ -26,25 +26,54 @@ export default function Filters({
       .then(setRecclasses)
       .catch(() => {});
   }, []);
-  
+
+  const [yearRange, setYearRange] = useState<{ min: number; max: number } | null>(null);
+
+  useEffect(() => {
+    fetch("/api/year-range")
+      .then((r) => r.json())
+      .then(setYearRange)
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (yearRange && value.yearMin == null && value.yearMax == null) {
+      set({ yearMin: yearRange.min, yearMax: yearRange.max });
+    }
+  }, [yearRange]);
+
+
   const set = (patch: Partial<FilterState>) => onChange({ ...value, ...patch });
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
       <div>
-        <label style={{ fontSize: 12, color: "#8b9bb0" }}>Year range</label>
+        <label style={{ fontSize: 12, color: "#8b9bb0" }}>Year range {yearRange && `(${yearRange.min}–${yearRange.max})`}</label>
         <div style={{ display: "flex", gap: 8 }}>
           <input
             type="number"
-            placeholder="Min year"
+            min={yearRange?.min}
+            max={yearRange?.max}
             value={value.yearMin ?? ""}
             onChange={(e) => set({ yearMin: e.target.value ? Number(e.target.value) : undefined })}
+            onBlur={(e) => {
+              if (!yearRange || !e.target.value) return;
+              const clamped = Math.min(Math.max(Number(e.target.value), yearRange.min), yearRange.max);
+              set({ yearMin: clamped });
+            }}
           />
           <input
             type="number"
-            placeholder="Max year"
+            min={yearRange?.min}
+            max={yearRange?.max}
+            defaultValue={yearRange?.min}
             value={value.yearMax ?? ""}
             onChange={(e) => set({ yearMax: e.target.value ? Number(e.target.value) : undefined })}
+            onBlur={(e) => {
+              if (!yearRange || !e.target.value) return;
+              const clamped = Math.min(Math.max(Number(e.target.value), yearRange.min), yearRange.max);
+              set({ yearMax: clamped });
+            }}
           />
         </div>
       </div>
