@@ -127,13 +127,11 @@ export async function getHexagonBiasScores() {
 }
 
 /* Unique recclass values for filter display */
-export async function getRecClassValues() {
-  const sql = `
-  select distinct(recclass)
-  from meteorites
-  order by recclass desc
-  `;
-  return query(sql);
+export async function getDistinctRecclassValues(): Promise<string[]> {
+  const rows = await query<{ recclass: string }>(
+    `select distinct recclass from meteorites where recclass is not null order by recclass`
+  );
+  return rows.map((row) => row.recclass);
 }
 
 /* Min and max values for year */

@@ -1,4 +1,6 @@
 "use client";
+import { useEffect, useState } from "react";
+
 
 export interface FilterState {
   yearMin?: number;
@@ -16,6 +18,15 @@ export default function Filters({
   value: FilterState;
   onChange: (v: FilterState) => void;
 }) {
+  const [recclasses, setRecclasses] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetch("/api/recclasses")
+      .then((r) => r.json())
+      .then(setRecclasses)
+      .catch(() => {});
+  }, []);
+  
   const set = (patch: Partial<FilterState>) => onChange({ ...value, ...patch });
 
   return (
@@ -54,10 +65,16 @@ export default function Filters({
         <label style={{ fontSize: 12, color: "#8b9bb0" }}>Class (e.g. L6, H5, CM2)</label>
         <input
           type="text"
-          placeholder="recclass"
+          list="recclass-options"
+          placeholder="Start typing... e.g. L6"
           value={value.recclass ?? ""}
           onChange={(e) => set({ recclass: e.target.value || undefined })}
         />
+        <datalist id="recclass-options">
+          {recclasses.map((c) => (
+            <option key={c} value={c} />
+          ))}
+        </datalist>
       </div>
 
       <div>
