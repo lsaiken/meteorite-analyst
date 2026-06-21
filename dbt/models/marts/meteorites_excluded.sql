@@ -6,6 +6,9 @@
 select
     nasa_id,
     name,
-    'missing_location' as exclusion_reason
+    case
+        when is_zero_placeholder then 'zero_placeholder_coordinates'
+        else 'missing_location'
+    end as exclusion_reason
 from {{ ref('stg_meteorites') }}
 where is_missing_location

@@ -56,4 +56,4 @@ models:
       - name: exclusion_reason
         tests:
           - accepted_values:
-              values: ["missing_location"]
+              values: ["missing_location", "zero_placeholder_coordinates"]

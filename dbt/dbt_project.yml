@@ -18,7 +18,11 @@ models:
       +schema: staging
     marts:
       +materialized: table
-      +schema: public
+      # No +schema here: dbt's default schema macro does
+      # "{target.schema}_{custom_schema}" when a custom schema IS set, even
+      # if it's literally "public" - that's what produced public_public.
+      # Leaving it unset means marts models land directly in the target
+      # schema (public, per profiles.yml).
       # dbt's `table` materialization drops and recreates the table each
       # run, which would otherwise wipe these indexes. Re-applying them as a
       # post-hook keeps the app's spatial/filter queries fast automatically.

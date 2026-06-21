@@ -50,8 +50,15 @@ flagged as (
         case when not (reclat_raw = 0 and reclong_raw = 0) then reclat_raw end as reclat,
         case when not (reclat_raw = 0 and reclong_raw = 0) then reclong_raw end as reclong,
 
-        -- Flag rows with no usable coordinates at all
-        (reclat_raw is null or reclong_raw is null) as is_missing_location,
+        -- Flag rows with no usable coordinates at all - this includes both
+        -- genuinely-null raw lat/lng AND the (0,0) placeholder case, since
+        -- reclat/reclong above get nulled for placeholder rows too. (Originally
+        -- this only checked the raw values, which missed the placeholder case
+        -- and let 6214 now-null coordinates leak into marts.meteorites.)
+        (
+            reclat_raw is null or reclong_raw is null
+            or (reclat_raw = 0 and reclong_raw = 0)
+        ) as is_missing_location,
 
         (reclat_raw = 0 and reclong_raw = 0) as is_zero_placeholder,
 
