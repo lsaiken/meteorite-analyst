@@ -16,6 +16,7 @@ const STYLE_URL = process.env.NEXT_PUBLIC_MAPLIBRE_STYLE_URL || "https://demotil
 export default function WorldMap({ filters, layers, onRegionSelect }: Props) {
   const mapRef = useRef<MapRef>(null);
   const [geojson, setGeojson] = useState<any>({ type: "FeatureCollection", features: [] });
+  const [selecting, setSelecting] = useState(false);
   const [dragStart, setDragStart] = useState<[number, number] | null>(null);
   const [dragRect, setDragRect] = useState<[number, number, number, number] | null>(null);
 
@@ -34,11 +35,18 @@ export default function WorldMap({ filters, layers, onRegionSelect }: Props) {
       .catch(() => {});
   }, [filters]);
 
-  // Shift+drag to draw a selection rectangle -> bbox sent to /api/explain
-  const onMouseDown = useCallback((e: any) => {
-    if (!e.originalEvent.shiftKey) return;
-    setDragStart([e.lngLat.lng, e.lngLat.lat]);
-  }, []);
+  // Selection is an explicit toggle (button below) rather than shift+drag -
+  // shift+drag collides with MapLibre's own built-in box-zoom interaction,
+  // which made the old gesture feel unreliable. dragPan is disabled on the
+  // <Map> itself while selecting (see below) so a plain click-drag draws a
+  // rectangle instead of panning.
+  const onMouseDown = useCallback(
+    (e: any) => {
+      if (!selecting) return;
+      setDragStart([e.lngLat.lng, e.lngLat.lat]);
+    },
+    [selecting]
+  );
 
   const onMouseMove = useCallback(
     (e: any) => {
@@ -55,7 +63,10 @@ export default function WorldMap({ filters, layers, onRegionSelect }: Props) {
   );
 
   const onMouseUp = useCallback(() => {
-    if (dragRect) onRegionSelect(dragRect);
+    if (dragRect) {
+      onRegionSelect(dragRect);
+      setSelecting(false); // auto-exit selection mode once a region is drawn
+    }
     setDragStart(null);
   }, [dragRect, onRegionSelect]);
 
@@ -80,14 +91,53 @@ export default function WorldMap({ filters, layers, onRegionSelect }: Props) {
 
   return (
     <>
-      <div style={{ position: "absolute", top: 10, left: 10, zIndex: 1, fontSize: 12, color: "#8b9bb0", background: "#0e1318cc", padding: "6px 10px", borderRadius: 6 }}>
-        Shift-drag to select a region for "Explain This Pattern"
+      <div
+        style={{
+          position: "absolute",
+          top: 10,
+          left: 10,
+          zIndex: 1,
+          display: "flex",
+          alignItems: "center",
+          gap: 8
+        }}
+      >
+        <button
+          onClick={() => {
+            setSelecting((s) => !s);
+            setDragRect(null);
+            setDragStart(null);
+          }}
+          style={{
+            fontSize: 13,
+            padding: "8px 14px",
+            borderRadius: 6,
+            border: selecting ? "1px solid #4d7cff" : "1px solid #2a3441",
+            background: selecting ? "#4d7cff" : "#0e1318cc",
+            color: selecting ? "white" : "#e6edf3",
+            cursor: "pointer",
+            fontWeight: selecting ? 600 : 400
+          }}
+        >
+          {selecting ? "Click and drag to draw a region…" : "📍 Select Region"}
+        </button>
+        {selecting && (
+          <span style={{ fontSize: 12, color: "#8b9bb0", background: "#0e1318cc", padding: "6px 10px", borderRadius: 6 }}>
+            Map panning is disabled while selecting
+          </span>
+        )}
       </div>
       <Map
         ref={mapRef}
         initialViewState={{ longitude: 0, latitude: 20, zoom: 1.6 }}
         mapStyle={STYLE_URL}
-        style={{ width: "100%", height: "100%" }}
+        style={{ width: "100%", height: "100%", cursor: selecting ? "crosshair" : undefined }}
+        // Disable MapLibre's own shift+drag box-zoom - it listens for the same
+        // gesture we used to use and was fighting with our handlers.
+        boxZoom={false}
+        // Disable panning while in selection mode so a plain drag draws a
+        // rectangle instead of moving the map.
+        dragPan={!selecting}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}
