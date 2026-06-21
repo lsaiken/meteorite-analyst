@@ -14,6 +14,7 @@ import os
 import sys
 import csv
 import psycopg2
+from psycopg2.extras import execute_values
 
 DATABASE_URL = os.environ["DATABASE_URL"]
 
@@ -46,12 +47,19 @@ def main(csv_path: str):
             raise ValueError(f"CSV is missing expected columns: {missing}")
 
         db_cols = [COLUMN_MAP[c] for c in COLUMN_MAP]
-        placeholders = ", ".join(["%s"] * len(db_cols))
-        insert_sql = f"insert into raw.meteorite_landings ({', '.join(db_cols)}) values ({placeholders})"
-
         rows = [tuple(row[csv_col] for csv_col in COLUMN_MAP) for row in reader]
 
-    cur.executemany(insert_sql, rows)
+    # execute_values batches many rows per round trip instead of one round
+    # trip per row (which executemany does under the hood with psycopg2) -
+    # the difference between ~1 minute and 30+ minutes over a pooled
+    # connection with real network latency, for a dataset this size.
+    execute_values(
+        cur,
+        f"insert into raw.meteorite_landings ({', '.join(db_cols)}) values %s",
+        rows,
+        page_size=2000
+    )
+
     conn.commit()
     print(f"Loaded {len(rows)} raw rows into raw.meteorite_landings.")
     cur.close()
