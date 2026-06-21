@@ -100,8 +100,8 @@ textarea, select, input {
 }
 
 .layer-toggle-row {
-  display: flex;
-  align-items: center;
+  display: block;
+  align-items: left;
   gap: 8px;
   font-size: 13px;
   padding: 4px 0;
