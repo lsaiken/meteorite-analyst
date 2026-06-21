@@ -40,7 +40,7 @@ export async function getMeteoritesGeoJSON(filters: MeteoriteFilters) {
 
   const sql = `
     select
-      id, name, year, mass_g, recclass, discovery_method, latitude, longitude
+      nasa_id, name, year, mass_g, recclass, discovery_method, latitude, longitude
     from meteorites
     where ${clauses.join(" and ")}
     limit 50000
@@ -54,7 +54,7 @@ export async function getMeteoritesGeoJSON(filters: MeteoriteFilters) {
       type: "Feature",
       geometry: { type: "Point", coordinates: [r.longitude, r.latitude] },
       properties: {
-        id: r.id,
+        nasa_id: r.nasa_id,
         name: r.name,
         year: r.year,
         mass_g: r.mass_g,
@@ -83,7 +83,7 @@ export async function getOffWorldFinds(filters: Omit<MeteoriteFilters, "bbox"> =
   if (filters.massMax != null) push("mass_g <= $", filters.massMax);
 
   const sql = `
-    select id, name, year, mass_g, recclass, discovery_method, latitude, longitude
+    select nasa_id, name, year, mass_g, recclass, discovery_method, latitude, longitude
     from meteorites
     where ${clauses.join(" and ")}
     order by year
