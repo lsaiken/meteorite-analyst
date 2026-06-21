@@ -1,0 +1,59 @@
+version: 2
+
+models:
+  - name: stg_meteorites
+    description: Cleaned/typed/flagged meteorite records. Lossless vs. raw - no rows dropped here.
+    columns:
+      - name: nasa_id
+        tests:
+          - unique
+          - not_null
+      - name: discovery_method
+        tests:
+          - accepted_values:
+              values: ["Fell", "Found"]
+      - name: mass_g
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: false
+      - name: year
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 860
+              max_value: 2026
+
+  - name: meteorites
+    description: >
+      Analysis-ready meteorites, including off-world finds (flagged via
+      is_off_world). This is what the app queries; map/geom queries should
+      filter is_off_world = false.
+    columns:
+      - name: nasa_id
+        tests:
+          - unique
+          - not_null
+      - name: latitude
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: -90
+              max_value: 90
+      - name: longitude
+        tests:
+          - not_null
+          # Off-world coordinates (e.g. Mars) legitimately fall outside
+          # +/-180 and would otherwise fail this test - scope to Earth rows.
+          - dbt_utils.accepted_range:
+              min_value: -180
+              max_value: 180
+              config:
+                where: "not is_off_world"
+
+  - name: meteorites_excluded
+    description: Rows dropped from marts.meteorites (no usable coordinates at all), with a reason, for auditability.
+    columns:
+      - name: exclusion_reason
+        tests:
+          - accepted_values:
+              values: ["missing_location"]

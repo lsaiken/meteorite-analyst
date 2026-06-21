@@ -1,0 +1,27 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    tables:
+      - name: meteorite_landings
+        description: >
+          NASA Meteorite Landings dataset, loaded verbatim via
+          scripts/load_raw.py. No cleaning has happened here — every column
+          is text. This is the landing zone; all transformation logic lives
+          in staging/marts models below it.
+        loaded_at_field: _loaded_at
+        columns:
+          - name: id
+            description: NASA's own meteorite ID (as text — see stg_meteorites for casting)
+          - name: name
+          - name: nametype
+            description: "'Valid' or 'Relict' (heavily weathered, original material mostly replaced)"
+          - name: recclass
+          - name: mass_g
+          - name: fall
+            description: "'Fell' (witnessed fall) or 'Found'. Renamed to discovery_method in stg_meteorites."
+          - name: year
+          - name: reclat
+          - name: reclong
+          - name: geolocation

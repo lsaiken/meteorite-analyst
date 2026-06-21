@@ -1,0 +1,17 @@
+# Copy this to ~/.dbt/profiles.yml (or set DBT_PROFILES_DIR=./dbt) and fill in
+# your Supabase connection details. Never commit a filled-in version —
+# this is a template only.
+
+meteorite_analyst:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: aws-0-region.pooler.supabase.com   # Supabase: Settings -> Database -> Connection pooling
+      user: postgres.xxxx
+      password: "{{ env_var('SUPABASE_DB_PASSWORD') }}"
+      port: 6543
+      dbname: postgres
+      schema: public
+      threads: 4
+      sslmode: require

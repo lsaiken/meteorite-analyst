@@ -1,0 +1,29 @@
+name: meteorite_analyst
+version: "1.0.0"
+config-version: 2
+
+profile: meteorite_analyst
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  meteorite_analyst:
+    staging:
+      +materialized: view
+      +schema: staging
+    marts:
+      +materialized: table
+      +schema: public
+      # dbt's `table` materialization drops and recreates the table each
+      # run, which would otherwise wipe these indexes. Re-applying them as a
+      # post-hook keeps the app's spatial/filter queries fast automatically.
+      meteorites:
+        +post-hook:
+          - "create index if not exists meteorites_geom_idx on {{ this }} using gist (geom)"
+          - "create index if not exists meteorites_year_idx on {{ this }} (year)"
+          - "create index if not exists meteorites_recclass_idx on {{ this }} (recclass)"

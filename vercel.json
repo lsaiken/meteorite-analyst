@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "app/api/explain/route.ts": {
+      "maxDuration": 60
+    }
+  }
+}
