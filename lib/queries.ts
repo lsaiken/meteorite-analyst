@@ -125,3 +125,22 @@ export async function getHexagonBiasScores() {
   `;
   return query(sql);
 }
+
+/* Unique recclass values for filter display */
+export async function getRecClassValues() {
+  const sql = `
+  select distinct(recclass)
+  from meteorites
+  order by recclass desc
+  `;
+  return query(sql);
+}
+
+/* Min and max values for year */
+export async function getMinMaxYearValues() {
+  const sql = `
+  select min(year), max(year)
+  from meteorites
+  `;
+  return query(sql);
+}
