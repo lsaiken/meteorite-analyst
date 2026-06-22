@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meteorite AI Analyst — Product Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0f14;
+    --surface: #121821;
+    --surface-2: #161d27;
+    --border: #232c38;
+    --text: #e6edf3;
+    --muted: #8b9bb0;
+    --rust: #c9784a;
+    --rust-dim: #5a3a26;
+    --blue: #5d87ff;
+    --blue-dim: #1c2840;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    line-height: 1.6;
+  }
+
+  .label-mono {
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* ---------- layout ---------- */
+  .page {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 32px 120px;
+  }
+
+  /* ---------- hero ---------- */
+  .hero {
+    padding: 96px 0 72px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  .specimen-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--rust);
+    border: 1px solid var(--rust-dim);
+    background: rgba(201, 120, 74, 0.08);
+    padding: 6px 12px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .specimen-tag .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--rust);
+  }
+
+  h1.display {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: clamp(40px, 6vw, 64px);
+    line-height: 1.04;
+    letter-spacing: -0.01em;
+    margin: 0 0 24px;
+    max-width: 760px;
+  }
+
+  h1.display em {
+    font-style: italic;
+    color: var(--rust);
+  }
+
+  .hero p.lede {
+    font-size: 19px;
+    color: var(--muted);
+    max-width: 620px;
+    margin: 0;
+  }
+
+  /* ---------- catalog number decoration ---------- */
+  .catalog-id {
+    position: absolute;
+    top: 100px;
+    right: 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.8;
+    opacity: 0.7;
+  }
+  .catalog-id span { color: var(--rust); }
+
+  /* ---------- section structure ---------- */
+  section.doc-section {
+    padding: 72px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  section.doc-section:last-child { border-bottom: none; }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+
+  .section-head .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--rust);
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  .section-head h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 32px;
+    margin: 0;
+  }
+
+  .section-head .rule {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  p.body-copy {
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 680px;
+    margin: 0 0 16px;
+  }
+  p.body-copy strong { color: var(--text); font-weight: 500; }
+
+  /* ---------- persona cards ---------- */
+  .personas {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 32px;
+  }
+
+  .persona-card {
+    background: var(--surface);
+    padding: 28px 24px;
+  }
+
+  .persona-card .catalog {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--rust);
+    margin-bottom: 14px;
+    display: block;
+  }
+
+  .persona-card h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 19px;
+    margin: 0 0 10px;
+  }
+
+  .persona-card p {
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  /* ---------- feature list ---------- */
+  .features {
+    display: flex;
+    flex-direction: column;
+    margin-top: 8px;
+  }
+
+  .feature-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 24px;
+    padding: 24px 0;
+    border-top: 1px solid var(--border);
+  }
+  .feature-row:first-child { border-top: none; }
+
+  .feature-row .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--blue);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding-top: 3px;
+  }
+
+  .feature-row h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 19px;
+    margin: 0 0 8px;
+  }
+
+  .feature-row p {
+    font-size: 15px;
+    color: var(--muted);
+    margin: 0;
+    max-width: 600px;
+  }
+
+  /* ---------- rationale callouts ---------- */
+  .rationale-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 24px;
+  }
+
+  .rationale-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--rust);
+    padding: 24px;
+  }
+
+  .rationale-card .num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--rust);
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .rationale-card h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 8px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .rationale-card p {
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  /* ---------- data quality strip ---------- */
+  .data-strip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px 28px 8px;
+    margin-top: 28px;
+  }
+
+  .data-strip-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 24px;
+  }
+  .data-strip-item:last-child { border-bottom: none; }
+
+  .data-strip-item .what {
+    font-size: 14px;
+    color: var(--text);
+    max-width: 480px;
+  }
+
+  .data-strip-item .figure {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    color: var(--rust);
+    white-space: nowrap;
+  }
+
+  /* ---------- stack ---------- */
+  .stack-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .stack-pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 7px 14px;
+    border-radius: 100px;
+  }
+
+  /* ---------- footer ---------- */
+  footer {
+    padding-top: 56px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  @media (max-width: 760px) {
+    .personas { grid-template-columns: 1fr; }
+    .rationale-grid { grid-template-columns: 1fr; }
+    .feature-row { grid-template-columns: 1fr; gap: 8px; }
+    .catalog-id { display: none; }
+    .page { padding: 0 20px 80px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="hero">
+    <div class="catalog-id">
+      SPECIMEN&nbsp;<span>NO. 45,716</span><br>
+      CLASS&nbsp;<span>CONVERSATIONAL BI</span><br>
+      SOURCE&nbsp;<span>NASA OPEN DATA</span>
+    </div>
+    <div class="specimen-tag"><span class="dot"></span>Product Documentation</div>
+    <h1 class="display">An <em>AI analyst</em> for 45,716<br>meteorite landings.</h1>
+    <p class="lede">
+      A conversational interface over NASA's Meteorite Landings dataset. Instead of
+      handing people a map and a legend, this tool lets them point at something
+      strange — a gap in central Africa, a cluster in Antarctica — and ask why,
+      then watches the system actually go investigate.
+    </p>
+  </header>
+
+  <section class="doc-section">
+    <div class="section-head">
+      <span class="eyebrow">01 — USE CASE</span>
+      <h2>From map to explanation</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="body-copy">
+      Most meteorite distribution maps show <strong>where rocks were found</strong>,
+      not where they actually fell — the difference is almost entirely a map of
+      <strong>human search effort</strong>: population density, road access,
+      vegetation, and which countries have funded expeditions. A raw scatter plot
+      makes that bias invisible. This tool makes the bias the subject.
+    </p>
+    <p class="body-copy">
+      The workflow is intentionally short: see a pattern, select it, ask why,
+      get an investigated answer with the evidence shown — not a static FAQ
+      entry, a live query against the actual data.
+    </p>
+    <div class="rationale-grid">
+      <div class="rationale-card">
+        <span class="num">→ 01</span>
+        <h4>Notice</h4>
+        <p>A sparse or dense region appears on the interactive map, filterable by year, class, mass, and fall type.</p>
+      </div>
+      <div class="rationale-card">
+        <span class="num">→ 02</span>
+        <h4>Select</h4>
+        <p>Draw a region directly on the map — no coordinates, no form fields.</p>
+      </div>
+      <div class="rationale-card">
+        <span class="num">→ 03</span>
+        <h4>Ask</h4>
+        <p>"Why are there so few here?" — plain language, no query syntax required.</p>
+      </div>
+      <div class="rationale-card">
+        <span class="num">→ 04</span>
+        <h4>Investigate</h4>
+        <p>The AI calls real tools against Postgres/PostGIS — population, climate, roads — and cites what it finds.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <div class="section-head">
+      <span class="eyebrow">02 — USERS</span>
+      <h2>Who this is built for</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="body-copy">
+      Nobody using this needs to know SQL or GIS software. The common thread is
+      curiosity about a pattern, without the time or training to chase it down
+      through spreadsheets and shapefiles.
+    </p>
+    <div class="personas">
+      <div class="persona-card">
+        <span class="catalog">PERSONA / A</span>
+        <h3>Planetary science researchers</h3>
+        <p>Want a fast first pass at "is this gap real or just a search-effort artifact" before committing to a formal study.</p>
+      </div>
+      <div class="persona-card">
+        <span class="catalog">PERSONA / B</span>
+        <h3>Citizen scientists & space enthusiasts</h3>
+        <p>Curious explorers who want to poke at open NASA data without standing up a GIS stack themselves.</p>
+      </div>
+      <div class="persona-card">
+        <span class="catalog">PERSONA / C</span>
+        <h3>Science writers & educators</h3>
+        <p>Need a quick, defensible explanation for a classroom or article — with the supporting numbers attached, not just an assertion.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <div class="section-head">
+      <span class="eyebrow">03 — FEATURES</span>
+      <h2>What it actually does</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="features">
+      <div class="feature-row">
+        <span class="tag">Map</span>
+        <div>
+          <h3>Interactive world map</h3>
+          <p>Clustered meteorite points, filterable by year, class, mass, and fall vs. found, rendered from a live PostGIS-backed API.</p>
+        </div>
+      </div>
+      <div class="feature-row">
+        <span class="tag">Layers</span>
+        <div>
+          <h3>Bias layer overlays</h3>
+          <p>Toggle population, road density, climate, and land cover — the candidate explanations for search-effort bias, shown alongside the data they're meant to explain.</p>
+        </div>
+      </div>
+      <div class="feature-row">
+        <span class="tag">AI</span>
+        <div>
+          <h3>"Explain This Pattern"</h3>
+          <p>An agentic loop, not a canned prompt: the model decides which tools to call — population, climate, road density, a contrasting reference region — and shows its work, labeling each claim's confidence.</p>
+        </div>
+      </div>
+      <div class="feature-row">
+        <span class="tag">Score</span>
+        <div>
+          <h3>Discovery Opportunity Score</h3>
+          <p>Expected vs. observed finds per H3 hex cell, estimating how underexplored a region is relative to its population and accessibility — explicitly flagged as illustrative until calibrated against known search-heavy regions.</p>
+        </div>
+      </div>
+      <div class="feature-row">
+        <span class="tag">Off-world</span>
+        <div>
+          <h3>Off-world finds, handled honestly</h3>
+          <p>One meteorite in this dataset was found on Mars, not Earth. Rather than dropping it or plotting it at a nonsense coordinate, it's flagged and surfaced in its own panel.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <div class="section-head">
+      <span class="eyebrow">04 — WHY THIS APPROACH</span>
+      <h2>Decisions, and the data behind them</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="body-copy">
+      The raw NASA export looks clean until you actually query it. Pulling the
+      real file surfaced exactly the kind of silent bias this product exists to
+      expose — which became the argument for every architectural choice below.
+    </p>
+    <div class="data-strip">
+      <div class="data-strip-item">
+        <span class="what">Rows with coordinates exactly (0, 0) — NASA's placeholder for "unknown location," not a real spot in the Gulf of Guinea</span>
+        <span class="figure">6,214</span>
+      </div>
+      <div class="data-strip-item">
+        <span class="what">Rows missing latitude/longitude entirely</span>
+        <span class="figure">7,315</span>
+      </div>
+      <div class="data-strip-item">
+        <span class="what">Meteorite found on Mars by the Opportunity rover — a real, non-Earth coordinate, not bad data</span>
+        <span class="figure">1</span>
+      </div>
+      <div class="data-strip-item">
+        <span class="what">Distinct meteorite classes (L6, H5, CM2…) — too many for a dropdown alone, hence searchable filtering</span>
+        <span class="figure">466</span>
+      </div>
+    </div>
+    <p class="body-copy" style="margin-top:24px;">
+      Three choices follow directly from this:
+    </p>
+    <div class="rationale-grid">
+      <div class="rationale-card">
+        <span class="num">RATIONALE</span>
+        <h4>Raw → dbt → marts, not a one-off script</h4>
+        <p>Cleaning a dataset this quietly imperfect by hand in a script means the next person can't see what was assumed. Every transformation lives in version-controlled, tested SQL, with a visible audit trail of exactly which rows were dropped and why.</p>
+      </div>
+      <div class="rationale-card">
+        <span class="num">RATIONALE</span>
+        <h4>Agentic tools, not a single prompt</h4>
+        <p>A fixed "explain this" prompt re-derives the same shallow answer every time. Giving the model real tools — population lookups, a reference-region comparison — means the explanation is actually grounded in what it finds, with gaps stated as gaps.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <div class="section-head">
+      <span class="eyebrow">05 — STACK</span>
+      <h2>Built on</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="body-copy">One deployable unit, one source of truth for transformations.</p>
+    <div class="stack-row">
+      <span class="stack-pill">Next.js · Vercel</span>
+      <span class="stack-pill">MapLibre GL JS</span>
+      <span class="stack-pill">Supabase · PostgreSQL</span>
+      <span class="stack-pill">PostGIS</span>
+      <span class="stack-pill">dbt</span>
+      <span class="stack-pill">Claude · tool calling</span>
+      <span class="stack-pill">H3 geospatial indexing</span>
+    </div>
+  </section>
+
+  <footer>
+    Meteorite AI Analyst — internal product documentation.
+  </footer>
+
+</div>
+</body>
+</html>
