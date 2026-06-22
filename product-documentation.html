@@ -333,12 +333,12 @@
 
   <header class="hero">
     <div class="catalog-id">
-      SPECIMEN&nbsp;<span>NO. 45,716</span><br>
+      SPECIMEN&nbsp;<span>METEORITES</span><br>
       CLASS&nbsp;<span>CONVERSATIONAL BI</span><br>
       SOURCE&nbsp;<span>NASA OPEN DATA</span>
     </div>
     <div class="specimen-tag"><span class="dot"></span>Product Documentation</div>
-    <h1 class="display">An <em>AI analyst</em> for 45,716<br>meteorite landings.</h1>
+    <h1 class="display">An <em>AI analyst</em> for <br>meteorite landings.</h1>
     <p class="lede">
       A conversational interface over NASA's Meteorite Landings dataset. Instead of
       handing people a map and a legend, this tool lets them point at something
@@ -365,11 +365,15 @@
       get an investigated answer with the evidence shown — not a static FAQ
       entry, a live query against the actual data.
     </p>
+    <p class="body-copy">
+      <em>Note: The additional datasets (e.g., population density, road access, etc) to enable bias investigation will be added in a later release.</em>
+    </p>
+    </p>
     <div class="rationale-grid">
       <div class="rationale-card">
         <span class="num">→ 01</span>
         <h4>Notice</h4>
-        <p>A sparse or dense region appears on the interactive map, filterable by year, class, mass, and fall type.</p>
+        <p>A sparse or dense region appears on the interactive map, filterable by year, class, mass, and discovery method (e.g., witnessed falls versus found meteorites).</p>
       </div>
       <div class="rationale-card">
         <span class="num">→ 02</span>
@@ -430,13 +434,13 @@
         <span class="tag">Map</span>
         <div>
           <h3>Interactive world map</h3>
-          <p>Clustered meteorite points, filterable by year, class, mass, and fall vs. found, rendered from a live PostGIS-backed API.</p>
+          <p>Clustered meteorite points, filterable by year, class, mass, and discovery method (e.g., fall vs. found), rendered from a live PostGIS-backed API.</p>
         </div>
       </div>
       <div class="feature-row">
         <span class="tag">Layers</span>
         <div>
-          <h3>Bias layer overlays</h3>
+          <h3>Bias layer overlays - Coming Soon</h3>
           <p>Toggle population, road density, climate, and land cover — the candidate explanations for search-effort bias, shown alongside the data they're meant to explain.</p>
         </div>
       </div>
@@ -489,7 +493,7 @@
         <span class="figure">1</span>
       </div>
       <div class="data-strip-item">
-        <span class="what">Distinct meteorite classes (L6, H5, CM2…) — too many for a dropdown alone, hence searchable filtering</span>
+        <span class="what">Distinct meteorite classes (L6, H5, CM2…) — with searchable filtering</span>
         <span class="figure">466</span>
       </div>
     </div>
