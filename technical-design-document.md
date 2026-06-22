@@ -22,43 +22,43 @@ implementation detail.
 ## 2. High-level architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                         Vercel (single deploy)                  │
+┌───────────────────────────────────────────────────────────────────┐
+│                         Vercel (single deploy)                    │
 │                                                                   │
-│  Next.js App Router                                              │
-│  ├── app/page.tsx              UI shell (map + sidebar)          │
-│  ├── components/                                                 │
-│  │     WorldMap.tsx            MapLibre GL JS + region select    │
-│  │     Filters.tsx             year/class/mass/discovery method  │
-│  │     BiasLayerToggle.tsx     population/roads/climate/landcover│
-│  │     Insights.tsx            renders AI explanation + chips    │
-│  │     OffWorldPanel.tsx       Mars meteorite, surfaced honestly │
+│  Next.js App Router                                               │
+│  ├── app/page.tsx              UI shell (map + sidebar)           │
+│  ├── components/                                                  │
+│  │     WorldMap.tsx            MapLibre GL JS + region select     │
+│  │     Filters.tsx             year/class/mass/discovery method   │
+│  │     BiasLayerToggle.tsx     population/roads/climate/landcover │
+│  │     Insights.tsx            renders AI explanation + chips     │
+│  │     OffWorldPanel.tsx       Mars meteorite, surfaced honestly  │
 │  │                                                                │
-│  └── app/api/  (serverless functions, Node runtime)              │
-│        /meteorites    -> filtered GeoJSON for the map            │
+│  └── app/api/  (serverless functions, Node runtime)               │
+│        /meteorites    -> filtered GeoJSON for the map             │
 │        /off-world     -> off-Earth finds, same filters            │
 │        /hexagons      -> precomputed H3 bias scores               │
 │        /recclasses    -> distinct classes (dropdown/datalist)     │
 │        /year-range    -> min/max year (input bounds)              │
 │        /explain       -> agentic Claude loop (tool calling)       │
-└─────────────────────┬─────────────────────────────────────────────┘
+└──────────────────────┬────────────────────────────────────────────┘
                        │ pg (node-postgres), pooled connection
                        ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    Supabase (Postgres + PostGIS)                │
+┌───────────────────────────────────────────────────────────────────┐
+│                    Supabase (Postgres + PostGIS)                  │
 │                                                                   │
-│  raw.meteorite_landings        verbatim CSV load, all text       │
-│         │  dbt run                                               │
-│         ▼                                                        │
+│  raw.meteorite_landings        verbatim CSV load, all text        │
+│         │  dbt run                                                │
+│         ▼                                                         │
 │  staging.stg_meteorites        typed, flagged, lossless           │
 │         │                                                         │
-│         ▼                                                        │
+│         ▼                                                         │
 │  public.meteorites             clean, analysis-ready (app reads)  │
 │  public.meteorites_excluded    audit trail of dropped rows        │
 │  public.hex_aggregates         precomputed H3 bias scores         │
 │  population_grid / climate /                                      │
 │  land_cover / roads            supporting bias-layer tables       │
-└─────────────────────────────────────────────────────────────────┘
+└───────────────────────────────────────────────────────────────────┘
 ```
 
 Everything — frontend, API, and the agentic AI logic — ships from one
