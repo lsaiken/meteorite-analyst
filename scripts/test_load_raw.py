@@ -1,9 +1,8 @@
-
-
 from unittest import mock
 import os
 import pytest
 import tempfile
+
 
 @pytest.fixture(scope="session", autouse=True)
 def fake_environment_variables():
@@ -17,10 +16,9 @@ def test_missing_columns(fake_environment_variables):
 
     tmp_file = tempfile.NamedTemporaryFile(suffix=".csv")
 
-    tmp_file.write(b'name,id,nametype,reclass')
+    tmp_file.write(b"name,id,nametype,reclass")
 
     with pytest.raises(ValueError):
         load_raw_data(tmp_file.name)
 
     tmp_file.close()
-        

@@ -76,7 +76,9 @@ def load_roads(osm_place_or_bbox):
     )
 
 
-def load_climate(worldclim_rainfall_tif: str, worldclim_temp_tif: str, grid_size_deg: float = 0.5):
+def load_climate(
+    worldclim_rainfall_tif: str, worldclim_temp_tif: str, grid_size_deg: float = 0.5
+):
     raise NotImplementedError(
         "Same pattern as load_population but with two raster bands "
         "(rainfall, temperature) aggregated into the climate table."

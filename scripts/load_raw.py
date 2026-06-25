@@ -29,12 +29,11 @@ COLUMN_MAP = {
     "year": "year",
     "reclat": "reclat",
     "reclong": "reclong",
-    "GeoLocation": "geolocation"
+    "GeoLocation": "geolocation",
 }
 
 
 def load_raw_data(csv_path: str):
-    
 
     with open(csv_path, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
@@ -50,7 +49,7 @@ def load_raw_data(csv_path: str):
     cur = conn.cursor()
 
     cur.execute("truncate table raw.meteorite_landings")
-    
+
     # execute_values batches many rows per round trip instead of one round
     # trip per row (which executemany does under the hood with psycopg2) -
     # the difference between ~1 minute and 30+ minutes over a pooled
@@ -59,7 +58,7 @@ def load_raw_data(csv_path: str):
         cur,
         f"insert into raw.meteorite_landings ({', '.join(db_cols)}) values %s",
         rows,
-        page_size=2000
+        page_size=2000,
     )
 
     conn.commit()

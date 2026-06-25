@@ -61,6 +61,11 @@ def main(resolution: int):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--resolution", type=int, default=3, help="H3 resolution (0=coarsest, 15=finest). 3-4 is a good global default.")
+    parser.add_argument(
+        "--resolution",
+        type=int,
+        default=3,
+        help="H3 resolution (0=coarsest, 15=finest). 3-4 is a good global default.",
+    )
     args = parser.parse_args()
     main(args.resolution)
