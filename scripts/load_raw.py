@@ -33,11 +33,8 @@ COLUMN_MAP = {
 }
 
 
-def main(csv_path: str):
-    conn = psycopg2.connect(DATABASE_URL)
-    cur = conn.cursor()
-
-    cur.execute("truncate table raw.meteorite_landings")
+def load_raw_data(csv_path: str):
+    
 
     with open(csv_path, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
@@ -49,6 +46,11 @@ def main(csv_path: str):
         db_cols = [COLUMN_MAP[c] for c in COLUMN_MAP]
         rows = [tuple(row[csv_col] for csv_col in COLUMN_MAP) for row in reader]
 
+    conn = psycopg2.connect(DATABASE_URL)
+    cur = conn.cursor()
+
+    cur.execute("truncate table raw.meteorite_landings")
+    
     # execute_values batches many rows per round trip instead of one round
     # trip per row (which executemany does under the hood with psycopg2) -
     # the difference between ~1 minute and 30+ minutes over a pooled
@@ -70,4 +72,4 @@ if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: python load_raw.py path/to/Meteorite_Landings.csv")
         sys.exit(1)
-    main(sys.argv[1])
+    load_raw_data(sys.argv[1])
