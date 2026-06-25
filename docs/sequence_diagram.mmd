@@ -1,0 +1,45 @@
+sequenceDiagram
+
+    actor User
+    participant Map as WorldMap.tsx
+    participant ExplainAPI as /api/explain
+    participant Claude as Anthropic Claude
+    participant Tools as aiTools.ts
+    participant DB as Supabase/PostGIS
+
+    User->>Map: Select region / hexagon
+    User->>Map: Ask question
+
+    Map->>ExplainAPI: POST {bbox/hexIds, question}
+
+    ExplainAPI->>Claude: Start agent session + available tools
+
+    Claude->>Tools: Call get_meteorite_stats(bbox)
+    Tools->>DB: Spatial query
+    DB-->>Tools: Count, mass, fall/found stats
+    Tools-->>Claude: Statistics
+
+    Claude->>Tools: Call get_population(bbox)
+    Tools->>DB: Population lookup
+    DB-->>Tools: Population density
+    Tools-->>Claude: Population results
+
+    Claude->>Tools: Call get_climate(bbox)
+    Tools->>DB: Climate lookup
+    DB-->>Tools: Rainfall/temperature
+    Tools-->>Claude: Climate results
+
+    Claude->>Tools: Call compare_to_similar_regions(bbox)
+    Tools->>DB: Comparative spatial analysis
+    DB-->>Tools: Similar-region statistics
+    Tools-->>Claude: Comparison results
+
+    Note over Claude: Agent reasons over tool outputs
+
+    Claude-->>ExplainAPI: Explanation + confidence + cited factors
+
+    ExplainAPI-->>Map: Streaming response
+
+    Map-->>User: Narrative explanation
+    Map-->>User: Confidence indicators
+    Map-->>User: Supporting charts/factors

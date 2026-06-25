@@ -1,0 +1,104 @@
+flowchart TB
+
+    subgraph DataSources["Data Sources"]
+        NASA["NASA Meteorite Landings CSV"]
+        POP["Population Data"]
+        CLIMATE["Climate Data"]
+        ROADS["Road Network Data"]
+        LAND["Land Cover Data"]
+    end
+
+    subgraph ETL["Data Pipeline"]
+        LOAD["load_raw.py"]
+        RAW["raw.meteorite_landings"]
+
+        DBT["dbt Transformations"]
+        STG["stg_meteorites"]
+        MART["meteorites"]
+        EXCL["meteorites_excluded"]
+
+        H3["compute_hexagons.py"]
+        HEX["H3 Aggregates"]
+    end
+
+    subgraph Database["Supabase Postgres + PostGIS"]
+        PG["Meteorites Table"]
+        RPC["Spatial RPC Functions"]
+        SUPPORT["Supporting Layers"]
+        HEXDB["Hexagon Statistics"]
+    end
+
+    subgraph Frontend["Next.js Frontend"]
+        MAP["WorldMap.tsx\nMapLibre + deck.gl"]
+        FILTERS["Filters.tsx"]
+        INSIGHTS["Insights.tsx"]
+        OFFWORLD["OffWorldPanel.tsx"]
+    end
+
+    subgraph APILayer["Next.js API Routes"]
+        API_M["/api/meteorites"]
+        API_H["/api/hexagons"]
+        API_E["/api/explain"]
+        API_O["/api/off-world"]
+    end
+
+    subgraph AI["Anthropic Claude Agent"]
+        TOOLS["aiTools.ts"]
+        STATS["get_meteorite_stats"]
+        POPT["get_population"]
+        CLIM["get_climate"]
+        LANDT["get_land_cover"]
+        ROADT["get_road_density"]
+        COMP["compare_to_similar_regions"]
+    end
+
+    NASA --> LOAD
+    LOAD --> RAW
+    RAW --> DBT
+    DBT --> STG
+    STG --> MART
+    STG --> EXCL
+
+    MART --> PG
+
+    POP --> SUPPORT
+    CLIMATE --> SUPPORT
+    ROADS --> SUPPORT
+    LAND --> SUPPORT
+
+    MART --> H3
+    H3 --> HEX
+    HEX --> HEXDB
+
+    MAP --> API_M
+    MAP --> API_H
+    INSIGHTS --> API_E
+    OFFWORLD --> API_O
+
+    API_M --> PG
+    API_H --> HEXDB
+    API_O --> PG
+
+    API_E --> TOOLS
+
+    TOOLS --> STATS
+    TOOLS --> POPT
+    TOOLS --> CLIM
+    TOOLS --> LANDT
+    TOOLS --> ROADT
+    TOOLS --> COMP
+
+    STATS --> RPC
+    POPT --> SUPPORT
+    CLIM --> SUPPORT
+    LANDT --> SUPPORT
+    ROADT --> SUPPORT
+    COMP --> RPC
+
+    RPC --> PG
+    RPC --> SUPPORT
+
+    API_E --> AI
+    AI --> TOOLS
+
+    API_E --> INSIGHTS
